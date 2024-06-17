@@ -4,6 +4,7 @@ This project uses Apache Airflow to automate the backup of a MySQL database and 
 
 ## Project Structure
 
+```
 |-- dags/
 |   |-- backup_mysql.py         # Airflow DAG definition file
 |-- scripts/
@@ -12,7 +13,7 @@ This project uses Apache Airflow to automate the backup of a MySQL database and 
 |   |-- delete_old_backups.sh   # Bash script to delete old backups
 |   |-- credentials.sh          # Script to define database credentials (not included)
 |-- README.md                   # This README file
-
+```
 
 ## Prerequisites
 
@@ -24,18 +25,26 @@ This project uses Apache Airflow to automate the backup of a MySQL database and 
 ## Installation and Setup
 
 1. **Clone the Repository:**
+   ```bash
    git clone <repository_url>
    cd <repository_name>
+   ```
 
 2. **Install Required Packages:**
+   ```bash
    pip install apache-airflow
+   ```
 
 3. **Initialize Airflow Database:**
+   ```bash
    airflow db init
+   ```
 
 4. **Start the Airflow Scheduler and Webserver:**
+   ```bash
    airflow scheduler &
    airflow webserver &
+   ```
 
 5. **Copy Scripts and DAG file:**
    - Place the scripts (`check_disk_size.sh`, `db_dump.sh`, `delete_old_backups.sh`) inside the `scripts` directory.
@@ -55,7 +64,7 @@ This project uses Apache Airflow to automate the backup of a MySQL database and 
 ## Usage
 
 1. **Access Airflow UI:**
-   - Open a web browser and go to `http://localhost:8081` (or the appropriate URL) to access the Airflow UI.
+   - Open a web browser and go to `http://localhost:8080` (or the appropriate URL) to access the Airflow UI.
 
 2. **Enable the `backup_mysql` DAG:**
    - Navigate to the Airflow UI.
