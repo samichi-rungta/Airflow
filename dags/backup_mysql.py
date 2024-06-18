@@ -7,7 +7,7 @@ from airflow.operators.email import EmailOperator
 default_args = {
     'owner': 'user',
     'depends_on_past': False,
-    'start_date': datetime(2023, 6, 16),
+    'start_date': datetime(2024, 6, 17),
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 1,
@@ -105,7 +105,9 @@ dag = DAG(
     'backup_mysql',
     default_args=default_args,
     description='A DAG to backup MySQL database and send email notification',
-    schedule_interval='0 0 * * *',  # Daily at midnight
+    schedule_interval='30 4 * * *',  # Daily at 10 AM
+    catchup=False,  # Don't perform backfill
+    max_active_runs=1,  # Ensure only one active DAG run at a time
 )
 
 check_free_space = BashOperator(
@@ -117,8 +119,8 @@ check_free_space = BashOperator(
 
 branch_check_space = BranchPythonOperator(
     task_id='branch_check_space',
-    provide_context=True,
     python_callable=check_space,
+    provide_context=True,
     dag=dag,
 )
 
@@ -140,7 +142,7 @@ send_space_email = EmailOperator(
     task_id='send_space_email',
     to='samichi.rungta@gmail.com',
     subject='Database Backup Failed: Not Enough Space',
-    html_content=space_error_template,
+    html_content="{{ task_instance.xcom_pull(task_ids='space_error_template', key='return_value') }}",
     dag=dag,
 )
 
@@ -154,12 +156,11 @@ send_final_email = EmailOperator(
 
 email_template = PythonOperator(
     task_id='email_template',
-    provide_context=True,
     python_callable=email_template,
+    provide_context=True,
     dag=dag,
 )
 
 check_free_space >> branch_check_space
 branch_check_space >> [dump_database, send_space_email]
 dump_database >> delete_old_backups >> email_template >> send_final_email
-
