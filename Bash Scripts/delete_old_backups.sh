@@ -1,13 +1,14 @@
-source /Users/samichirungta/airflow/scripts/credentials.sh
+#!/bin/bash
 
-directory=$DUMP_DIR
+# Define the backup directory directly in the script
+directory="/Users/samichirungta/airflow/backups"
 
 cd "$directory" || exit
 
-#sort files wrt time ie. newest first
+# Sort files wrt time i.e., newest first
 files=($(ls -p -t | grep -v /))
 
-#length of files
+# Length of files
 num_files=${#files[@]}
 
 if [ "$num_files" -gt 2 ]; then
